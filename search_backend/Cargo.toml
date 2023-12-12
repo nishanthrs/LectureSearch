@@ -11,4 +11,5 @@ reqwest = { version = "0.11.22", features = ["json"] }
 serde = { version = "1.0.193", features = ["derive"] }
 serde_json = "1.0.108"
 tokio = { version = "1", features = ["full"] }
+typesense_codegen = { version = "0.23.0", path="./typesense_codegen" }
 url = "2.5.0"
