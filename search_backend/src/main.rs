@@ -1,9 +1,11 @@
-use axum::{extract::Query, routing::get, Router};
+use anyhow::{Result};
+use axum::{extract::Query, http::StatusCode, routing::get, Json, Router};
 use serde::{Serialize, Deserialize};
+use serde::de::value::MapDeserializer;
 use std::net::SocketAddr;
 use typesense_codegen::apis::configuration::{ApiKey, Configuration};
 use typesense_codegen::apis::documents_api::search_collection;
-use typesense_codegen::models::{SearchParameters, SearchResult};
+use typesense_codegen::models::{SearchParameters};
 use url::Url;
 
 #[derive(Deserialize)]
@@ -35,7 +37,7 @@ struct VideoTranscriptionDoc {
     view_count: i32
 }
 
-async fn search_typesense_idx(query: String) {
+async fn search_typesense_idx(query: String) -> Result<Vec<VideoTranscriptionDoc>>  {
     let client = reqwest::Client::new();
     let typesense_host = Url::parse("http://127.0.0.1:8108").unwrap();
     let collection_name = "educational_video_transcriptions";
@@ -61,33 +63,40 @@ async fn search_typesense_idx(query: String) {
         &typesense_config,
         collection_name,
         typesense_search_params,
-    ).await;
-    match search_response {
-        Ok(SearchResult { hits: hits_val, .. }) => {
-            match hits_val {
-                Some(hits) => {
-                    println!("Got {} hits", hits.len());
-                    for hit in &hits {
-                        println!("Hit: {:?}", hit);
-                    }
-                },
-                None => println!("No hits"),
+    ).await?;
+    match search_response.hits {
+        Some(hits) => {
+            println!("Got {} hits", hits.len());
+            for hit in &hits {
+                println!("Hit: {:?}", hit);
             }
+            let video_docs = hits
+                .iter()
+                .filter_map(|hit| match &hit.document {
+                    Some(doc) => Some(
+                        // TODO: Look into better ways of deserializing HashMap<String, serde_json::Value> into VideoTranscriptionDoc
+                        VideoTranscriptionDoc::deserialize(
+                            MapDeserializer::new(doc.clone().into_iter())
+                        ).unwrap()
+                    ),
+                    // Should not happen due to skip_serializing_if macro in SearchResultHit struct
+                    None => None,
+                })
+                .collect();
+            Ok(video_docs)
         },
-        Err(search_collection_err) => {
-            println!("Error: {}", search_collection_err);
-        },
-    };
+        None => Ok(vec![]),
+    }
 }
 
-async fn handler(Query(search_params): Query<SearchParams>) -> String {
-    search_typesense_idx(search_params.query).await;
-    "HELLO".to_string()
+async fn handler(Query(search_params): Query<SearchParams>) -> (StatusCode, Json<Vec<VideoTranscriptionDoc>>) {
+    let video_docs = search_typesense_idx(search_params.query).await.unwrap();
+    (StatusCode::OK, Json(video_docs))
 }
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/", get(handler));
+    let app = Router::new().route("/search", get(handler));
     let addr = SocketAddr::from(([127, 0, 0, 1], 42069));
 
     axum::Server::bind(&addr)
