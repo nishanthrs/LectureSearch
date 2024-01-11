@@ -75,6 +75,7 @@ async fn search_typesense_idx(query: String) -> Result<Vec<VideoTranscriptionDoc
                 .filter_map(|hit| match &hit.document {
                     Some(doc) => Some(
                         // TODO: Look into better ways of deserializing HashMap<String, serde_json::Value> into VideoTranscriptionDoc
+                        // https://www.google.com/search?q=convert+hashmap+to+serde_json%3A%3AMap
                         VideoTranscriptionDoc::deserialize(
                             MapDeserializer::new(doc.clone().into_iter())
                         ).unwrap()
