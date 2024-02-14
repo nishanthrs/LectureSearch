@@ -19,5 +19,7 @@ WORKDIR /app
 COPY gen_video_ids.sh /app/gen_video_ids.sh
 COPY transcribe_yt_videos.sh /app/transcribe_yt_videos.sh
 
-RUN ./gen_video_ids.sh "https://www.youtube.com/@mitocw/playlists" "\s(6\.|18\.)" cs_math_mit_ocw_playlist_ids.txt 10
-CMD ["./transcribe_audio.sh", "playlist_ids_files"]
+RUN cd /app \
+    && ./gen_video_ids.sh "https://www.youtube.com/@mitocw/playlists" "\s(6\.|18\.)" cs_math_mit_ocw_playlist_ids.txt 10 \
+    && chmod u+x ./transcribe_yt_videos.sh
+CMD ["./transcribe_yt_videos.sh", "playlist_ids_files"]

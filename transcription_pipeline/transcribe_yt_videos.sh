@@ -23,9 +23,6 @@ for file in "$1"/*; do
 
     echo "Downloaded and processed audio for links in $file!"
 
-    # ls $processed_audios_dir_name | xargs -I {} basename {} .wav | xargs -I {} $whisper_cpp_exec_path -t 1 -m $whisper_cpp_model_path -f "$processed_audios_dir_name/{}.wav" --output-srt --output-file "$transcriptions_dir_name/$(basename {})"
-    # parallel -j+0 $whisper_cpp_exec_path -m $whisper_cpp_model_path -f "$processed_audios_dir_name/{}" --output-srt --output-file "$transcriptions_dir_name/{.}" ::: $(ls $processed_audios_dir_name)
-
     # Transcribe audio via insanely-fast-whisper model (only works on CUDA or Mac devices)
     # TODO: Figure out how to use flash-attn arg and install it correctly in Dockerfile
     ls $processed_audios_dir_name | xargs -I {} basename {} .wav | xargs -I {} insanely-fast-whisper \

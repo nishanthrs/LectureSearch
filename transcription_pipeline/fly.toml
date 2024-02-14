@@ -7,6 +7,9 @@ app = 'video-transcription'
 primary_region = 'ord'
 vm.size = 'a100-40gb'
 
+[build]
+dockerfile = "Dockerfile"
+
 [[mounts]]
 source = 'data'
 destination = '/data'
