@@ -1,0 +1,19 @@
+# fly.toml app configuration file generated for video-transcription on 2024-02-14T01:01:51-05:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'video-transcription'
+primary_region = 'ord'
+vm.size = 'a100-40gb'
+
+[[mounts]]
+source = 'data'
+destination = '/data'
+
+[http_service]
+internal_port = 8080
+auto_stop_machines = true
+auto_start_machines = true
+min_machines_running = 0
+processes = ['app']
