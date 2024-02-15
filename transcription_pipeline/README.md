@@ -6,6 +6,15 @@
   * Fly GPU A100 (40GB) pricing: $2.50 per hour
   * ~20.74x cheaper to run on GPU cloud!
 
+## Useful Fly Commands
+```bash
+fly status  # Check if machines are running
+fly machine start  # Start machine again
+fly machine stop  # Stop machine if running
+fly deploy  # Deploys app (according to fly.toml and Dockerfile)
+fly ssh console  # Run cmds directly on fly machine (after machine is started)
+```
+
 ## Ideas
 
 * If we decide to use GPUs for the Kubernetes workers, we can run [this Whisper model code](https://github.com/Vaibhavs10/insanely-fast-whisper) on a GPU worker
