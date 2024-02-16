@@ -10,8 +10,6 @@ mkdir -p $processed_audios_dir_name
 mkdir -p $transcriptions_dir_name
 mkdir -p $video_metadata_dir_name
 
-echo $(pwd)
-
 # Due to machine memory and disk constraints (Mac M1; 16 GB RAM; 512 GB SSD), parallel runs out of memory when running through a file of 20+ lecture playlists
 # Instead, we'll chunk the links input into separate files and go through each chunk sequentially
 for file in "$1"/*; do

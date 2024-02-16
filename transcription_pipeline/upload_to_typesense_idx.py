@@ -10,7 +10,11 @@ def init_search_client() -> typesense.Client:
     client = typesense.Client({
         "api_key": "xyz",
         "nodes": [{
-            # TODO: Change to web server IP; need to figure out how to connect Fly GPU to web server on same private network
+            # TODO: Change to web server IP (GPU on private networking (Flycast app), web server on public networking)
+            # This script will be run on Fly GPU, so need to figure out how to connect Fly GPU to web server on same private network
+            # Web server on Fly.io, DigitalOcean, or AWS? Which cloud provider?
+            # For now, run the web server on the Ubuntu PC, so just make sure that's on the same network as Fly GPU
+            # Docs: https://fly.io/docs/networking/
             "host": "localhost",
             "port": "8108",
             "protocol": "http",
