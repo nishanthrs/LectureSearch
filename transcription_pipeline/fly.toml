@@ -10,7 +10,9 @@ vm.size = 'a100-40gb'
 [build]
 dockerfile = "Dockerfile"
 
-[[mounts]]
+# TODO: Don't know if we need this since we're not storing data on GPU after script is done;
+# look into getting rid of this
+[mounts]
 source = 'data'
 destination = '/data'
 

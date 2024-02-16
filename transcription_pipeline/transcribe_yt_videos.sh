@@ -14,8 +14,7 @@ mkdir -p $video_metadata_dir_name
 # Instead, we'll chunk the links input into separate files and go through each chunk sequentially
 for file in "$1"/*; do
     # Download YT audio data from links text file as .wav files (by line in parallel)
-    parallel -q -j+0 --progress -a $file yt-dlp --ffmpeg-location /opt/local/bin/ffmpeg --extract-audio --audio-format wav --audio-quality 0 --restrict-filenames  --write-info-json
-    # TODO: Currently an issue here! Remove CMD from Docker container, keep Fly machine open by editing fly.toml, and debug why this is occurring quickly
+    parallel -q -j+0 --progress -a $file yt-dlp --extract-audio --audio-format wav --audio-quality 0 --restrict-filenames  --write-info-json
     mv *.wav $raw_audios_dir_name/
     mv *.info.json $video_metadata_dir_name/
     # Convert audio files to 16 khz (whisper.cpp only works on 16-bit wav files)
@@ -26,8 +25,6 @@ for file in "$1"/*; do
     echo "Downloaded and processed audio for links in $file!"
 
     # Transcribe audio via insanely-fast-whisper model (only works on CUDA or Mac devices)
-    # TODO: Figure out how to use flash-attn arg and install it correctly in Dockerfile
-    # (currently an issue with wheel pkg; consider pip installing that manually first in Dockerfile)
     ls $processed_audios_dir_name | xargs -I {} basename {} .wav | xargs -I {} insanely-fast-whisper \
         --file-name "$processed_audios_dir_name/{}.wav" \
         --batch-size 24 \

@@ -5,8 +5,11 @@
   * Google Cloud: $.009 per 15 secs; .009 * (3600*24/15) = $51.84 per hour of video
   * Fly GPU A100 (40GB) pricing: $2.50 per hour
   * ~20.74x cheaper to run on GPU cloud!
+  * Based on the benchmarks for [`insanely-fast-whisper`](https://github.com/Vaibhavs10/insanely-fast-whisper?tab=readme-ov-file), via batching and fp16 and bettertransformer framework, we can transcribe at 30x realtime.
+  * That means we can transcribe 30(60) = 1800 mins of audio in an hour or for $2.50. That means ~30 videos of 1 hr lectures transcribed at $2.50. Even if this is an optimistic estimate, that's significantly cheaper than any managed service. 
 
 ## Useful Fly Commands
+
 ```bash
 fly status  # Check if machines are running
 fly machine start  # Start machine again
