@@ -7,15 +7,34 @@
   * ~20.74x cheaper to run on GPU cloud!
   * Based on the benchmarks for [`insanely-fast-whisper`](https://github.com/Vaibhavs10/insanely-fast-whisper?tab=readme-ov-file), via batching and fp16 and bettertransformer framework, we can transcribe at 30x realtime.
   * That means we can transcribe 30(60) = 1800 mins of audio in an hour or for $2.50. That means ~30 videos of 1 hr lectures transcribed at $2.50. Even if this is an optimistic estimate, that's significantly cheaper than any managed service. 
+  
+## Installing Nvidia Drivers and CUDA
+
+Was a huge pain in the ass to download Nvidia drivers on my Ubuntu PC; I've lost count on how many times I've had to restart and reboot in recovery mode:
+
+* Had to download nvidia-driver-525
+  * By default, Ubuntu will download the one with -server. This is not correct, there is no GUI support for this! The same goes for the -open driver as well.
+  * Initially tried downloading nvidia-driver-535; that didn't work
+  * Also had to [disable nouveau drivers](https://askubuntu.com/questions/841876/how-to-disable-nouveau-kernel-driver) before installing and rebooting
+  * Very useful [reference](https://gist.github.com/MihailCosmin/affa6b1b71b43787e9228c25fe15aeba) for all the installation and cleanup commands
+  * Maybe I'll try upgrading drivers to nvidia-driver-545 somewhere down the line
+* Installing CUDA was quite simple
+  * Followed [instructions on Nvidia site](https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=20.04&target_type=deb_local)
+  * Had to be careful to download right CUDA version (12.0.1) for nvidia-driver-525
+
+Even installing these packages for the Dockerfile from a base Ubuntu image on Fly.io GPU servers was a bit of a pain (not as much as installing them locally though).
 
 ## Useful Fly Commands
 
 ```bash
+# Run within same dir as fly.toml; otherwise, auth and cmds won't work!
 fly status  # Check if machines are running
 fly machine start  # Start machine again
 fly machine stop  # Stop machine if running
 fly deploy  # Deploys app (according to fly.toml and Dockerfile)
 fly ssh console  # Run cmds directly on fly machine (after machine is started)
+fly ssh console -a video-transcription -C "cat /data/transcriptions/Lecture_1_Part_1_-_Introduction_and_Motivation-[0YqjeqLhDDE]"
+LPOP transcription_task_queue  # redis-cli cmd to get data
 ```
 
 ## Ideas
