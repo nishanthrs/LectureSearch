@@ -3,6 +3,20 @@ import os
 import pysrt
 import typesense
 
+"""
+Output from insanely-fast-whisper:
+{
+    "speakers": [...],
+    "chunks": [
+        {
+            "timestamp": [2136.44, 2138.44], 
+            "text": " OK, well, we've got a good set of students"}
+        }
+    ],
+    "text": "...",
+}
+"""
+
 
 COLLECTION_NAME = "educational_video_transcriptions"
 
