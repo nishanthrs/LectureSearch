@@ -11,14 +11,14 @@ vm.size = 'a100-40gb'
 dockerfile = "Dockerfile"
 
 # TODO: Don't know if we need this since we're not storing data on GPU after script is done;
-# look into getting rid of this
+# look into getting rid of this: https://fly.io/docs/reference/volumes/
 [mounts]
 source = 'data'
 destination = '/data'
 
-[http_service]
+[services]
 internal_port = 8080
-auto_stop_machines = true
+auto_stop_machines = false
 auto_start_machines = true
-min_machines_running = 0
-processes = ['app']
+# min_machines_running = 0
+# processes = ['app']
