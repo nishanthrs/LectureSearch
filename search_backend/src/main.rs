@@ -1,3 +1,5 @@
+mod transcription_tasks;
+
 use anyhow::Result;
 use axum::{extract::Query, http::StatusCode, routing::get, Json, Router};
 use serde::de::value::MapDeserializer;
@@ -7,6 +9,8 @@ use typesense_codegen::apis::configuration::{ApiKey, Configuration};
 use typesense_codegen::apis::documents_api::search_collection;
 use typesense_codegen::models::SearchParameters;
 use url::Url;
+
+use transcription_tasks::push_transcription_task_to_queue;
 
 const TYPESENSE_API_KEY: &str = "ncN2n85vYxgCg45khosRNlOb0vEu6gyEYB396h2zelSMZzyg";
 
@@ -99,15 +103,18 @@ async fn search_typesense_idx(query: String) -> Result<Vec<VideoTranscriptionDoc
 async fn handler(
     Query(search_params): Query<SearchParams>,
 ) -> (StatusCode, Json<Vec<VideoTranscriptionDoc>>) {
-    let video_docs = search_typesense_idx(search_params.query).await.unwrap();
-    println!("Video docs: {:?}", video_docs);
-    (StatusCode::OK, Json(video_docs))
+    // let video_docs = search_typesense_idx(search_params.query).await.unwrap();
+    // println!("Video docs: {:?}", video_docs);
+    // (StatusCode::OK, Json(video_docs))
+    (StatusCode::OK, Json(vec![]))
 }
 
 #[tokio::main]
 async fn main() {
     let app = Router::new().route("/search", get(handler));
     let addr = SocketAddr::from(([127, 0, 0, 1], 42069));
+
+    let _ = push_transcription_task_to_queue();
 
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
