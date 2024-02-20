@@ -103,10 +103,9 @@ async fn search_typesense_idx(query: String) -> Result<Vec<VideoTranscriptionDoc
 async fn handler(
     Query(search_params): Query<SearchParams>,
 ) -> (StatusCode, Json<Vec<VideoTranscriptionDoc>>) {
-    // let video_docs = search_typesense_idx(search_params.query).await.unwrap();
-    // println!("Video docs: {:?}", video_docs);
-    // (StatusCode::OK, Json(video_docs))
-    (StatusCode::OK, Json(vec![]))
+    let video_docs = search_typesense_idx(search_params.query).await.unwrap();
+    println!("Video docs: {:?}", video_docs);
+    (StatusCode::OK, Json(video_docs))
 }
 
 #[tokio::main]
