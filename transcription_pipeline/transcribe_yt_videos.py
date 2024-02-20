@@ -114,6 +114,7 @@ def init_collection(client: typesense.Client) -> None:
             {"name": "start_time", "type": "int32"},
             {"name": "end_time", "type": "int32"},
             {"name": "content", "type": "string"},
+            {"name": "thumbnail_url", "type": "string"},
         ],
         "default_sorting_field": "channel_follower_count",
     }
@@ -148,6 +149,7 @@ def upload_transcription_data_to_typesense(
                 "start_time": int(round(start_ts, 0)) if start_ts is not None else 0,
                 "end_time": int(round(end_ts, 0)) if end_ts is not None else 0,
                 "content": text,
+                "thumbnail_url": video_metadata["thumbnail"],
             }
             transcription_docs.append(transcription_doc)
         except KeyError as e:
@@ -187,6 +189,7 @@ def exec_task():
         transcription_chunks = transcribe_video(audio_filepath)
 
         typesense_client = init_search_client()
+        # typesense_client.collections[COLLECTION_NAME].delete()
         try:
             init_collection(typesense_client)
         except typesense.exceptions.ObjectAlreadyExists:

@@ -10,7 +10,7 @@
 * Figured out how to write the code by reading [the docs](https://github.com/typesense/typesense-rust/tree/main/typesense_codegen) and the method headers
 * Testing it out by starting a local Typesense server: `sudo systemctl start typesense-server.service` (config settings at `/etc/typesense/typesense-server.ini`) and then starting server via `cargo run`
 
-TODO: Experiment with other search index offerings ([Meilisearch](https://www.meilisearch.com/docs/reference/api/overview)) or vector DBs ([Qdrant](https://qdrant.tech/documentation/)) for RAG implementation (QA when you click on each video)
+Experiment with other search index offerings ([Meilisearch](https://www.meilisearch.com/docs/reference/api/overview)) or vector DBs ([Qdrant](https://qdrant.tech/documentation/)) for RAG implementation (QA when you click on each video)
 
 ## RAG Articles/Sources
 

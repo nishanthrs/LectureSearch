@@ -46,9 +46,6 @@ struct VideoTranscriptionDoc {
 async fn search_typesense_idx(query: String) -> Result<Vec<VideoTranscriptionDoc>> {
     let client = reqwest::Client::new();
     let typesense_host = Url::parse("http://0.0.0.0:8108").unwrap();
-    /* TODO: Will not work unless collection is initialized for this new Ubuntu Typesense server!
-    Run indexing script from AI_playground again to get this working.
-    Or just starting working on deploying it as a service right away! */
     let collection_name = "educational_video_transcriptions";
     let typesense_config = Configuration {
         base_path: typesense_host.to_string(),
