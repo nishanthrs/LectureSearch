@@ -1,6 +1,6 @@
 mod transcription_tasks;
 
-use anyhow::Result;
+use anyhow::{Error, Result};
 use axum::{extract::Query, http::StatusCode, routing::get, Json, Router};
 use serde::de::value::MapDeserializer;
 use serde::{Deserialize, Serialize};
@@ -17,6 +17,11 @@ const TYPESENSE_API_KEY: &str = "ncN2n85vYxgCg45khosRNlOb0vEu6gyEYB396h2zelSMZzy
 #[derive(Deserialize)]
 struct SearchParams {
     query: String,
+}
+
+#[derive(Deserialize)]
+struct UploadParams {
+    video_url: String,
 }
 
 #[derive(Serialize)]
@@ -97,7 +102,7 @@ async fn search_typesense_idx(query: String) -> Result<Vec<VideoTranscriptionDoc
     }
 }
 
-async fn handler(
+async fn handle_search(
     Query(search_params): Query<SearchParams>,
 ) -> (StatusCode, Json<Vec<VideoTranscriptionDoc>>) {
     let video_docs = search_typesense_idx(search_params.query).await.unwrap();
@@ -105,12 +110,23 @@ async fn handler(
     (StatusCode::OK, Json(video_docs))
 }
 
+async fn upload_transcriptions_to_search_idx(video_url: String) -> Result<(), Error> {
+    push_transcription_task_to_queue(video_url)
+}
+
+async fn handle_upload(Query(upload_params): Query<UploadParams>) -> (StatusCode, String) {
+    let _ = upload_transcriptions_to_search_idx(upload_params.video_url)
+        .await
+        .unwrap();
+    (StatusCode::OK, "Successfully uploaded!".to_string())
+}
+
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/search", get(handler));
+    let app = Router::new()
+        .route("/search", get(handle_search))
+        .route("/upload", get(handle_upload));
     let addr = SocketAddr::from(([127, 0, 0, 1], 42069));
-
-    let _ = push_transcription_task_to_queue();
 
     axum::Server::bind(&addr)
         .serve(app.into_make_service())

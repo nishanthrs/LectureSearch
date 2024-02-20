@@ -14,12 +14,12 @@ struct TranscriptionTask {
     video_url: String,
 }
 
-pub fn push_transcription_task_to_queue() -> Result<()> {
+pub fn push_transcription_task_to_queue(video_url: String) -> Result<()> {
     let redis_client = redis::Client::open(LOCAL_REDIS_URL)?;
     let mut redis_conn = redis_client.get_connection()?;
     println!("Connected to Redis queue on {}!", LOCAL_REDIS_URL);
 
-    let video_url = "https://www.youtube.com/watch?v=swJsw9Jvgoc";
+    // let video_url = "https://www.youtube.com/watch?v=swJsw9Jvgoc";
     let curr_ts = SystemTime::now()
         .duration_since(SystemTime::UNIX_EPOCH)
         .unwrap()
@@ -36,7 +36,7 @@ pub fn push_transcription_task_to_queue() -> Result<()> {
 
     let mut find_video_statement =
         sqlite_conn.prepare("SELECT * FROM processed_videos WHERE video_url = ?1")?;
-    let mut find_video_rows = find_video_statement.query([video_url])?;
+    let mut find_video_rows = find_video_statement.query([&video_url])?;
     while let Ok(Some(row)) = find_video_rows.next() {
         let video_processed_ts: i64 = row.get("processed_timestamp").unwrap();
         println!(
@@ -47,19 +47,19 @@ pub fn push_transcription_task_to_queue() -> Result<()> {
     }
     let num_rows = sqlite_conn.execute(
         "INSERT INTO processed_videos (video_url, processed_timestamp) VALUES (?1, ?2)",
-        (video_url, curr_ts),
+        (&video_url, curr_ts),
     );
     println!("Number of inserted rows: {}", num_rows.unwrap());
 
     let test_transcription_task = TranscriptionTask {
         id: 1,
-        video_url: video_url.to_string(),
+        video_url: video_url,
     };
     let serialized_transcription_task = serde_json::to_string(&test_transcription_task).unwrap();
-    let res = redis_conn.lpush(REDIS_TASK_QUEUE_NAME, serialized_transcription_task)?;
+    let _ = redis_conn.lpush(REDIS_TASK_QUEUE_NAME, serialized_transcription_task)?;
     println!(
-        "Task: {:?} successfully pushed onto queue: {:?}!",
-        test_transcription_task, res
+        "Task: {:?} successfully pushed onto queue!",
+        test_transcription_task
     );
     Ok(())
 }
