@@ -1,0 +1,5 @@
+# flyctl launch added from typesense_codegen/.gitignore
+typesense_codegen/target
+typesense_codegen/**/**/*.rs.bk
+typesense_codegen/**/Cargo.lock
+fly.toml

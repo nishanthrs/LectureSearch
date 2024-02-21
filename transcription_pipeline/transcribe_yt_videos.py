@@ -14,7 +14,7 @@ import yt_dlp
 
 COLLECTION_NAME = "educational_video_transcriptions"
 LOCAL_REDIS_URL = "redis://127.0.0.1:6379"
-UPSTASH_REDIS_URL = "redis://default:d0ac64668d6e43cea9c1c4fe13f8e60f@fly-transcription_tasks.upstash.io:6379"
+UPSTASH_REDIS_URL = "redis://default:dc4072d39b6745739f01b6c14cc2a658@fly-lecturesearch-web-redis.upstash.io:6379"
 QUEUE_NAME = "transcription_tasks_queue"
 TYPESENSE_API_KEY = "ncN2n85vYxgCg45khosRNlOb0vEu6gyEYB396h2zelSMZzyg"
 

@@ -126,7 +126,7 @@ async fn main() {
     let app = Router::new()
         .route("/search", get(handle_search))
         .route("/upload", get(handle_upload));
-    let addr = SocketAddr::from(([127, 0, 0, 1], 42069));
+    let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
 
     axum::Server::bind(&addr)
         .serve(app.into_make_service())

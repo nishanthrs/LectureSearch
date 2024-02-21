@@ -6,6 +6,8 @@ use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
 
 const LOCAL_REDIS_URL: &str = "redis://127.0.0.1:6379";
+const UPSTASH_REDIS_URL: &str =
+    "redis://default:dc4072d39b6745739f01b6c14cc2a658@fly-lecturesearch-web-redis.upstash.io:6379";
 const REDIS_TASK_QUEUE_NAME: &str = "transcription_task_queue";
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -15,9 +17,9 @@ struct TranscriptionTask {
 }
 
 pub fn push_transcription_task_to_queue(video_url: String) -> Result<()> {
-    let redis_client = redis::Client::open(LOCAL_REDIS_URL)?;
-    let mut redis_conn = redis_client.get_connection()?;
-    println!("Connected to Redis queue on {}!", LOCAL_REDIS_URL);
+    let redis_client = redis::Client::open(UPSTASH_REDIS_URL).unwrap();
+    let mut redis_conn = redis_client.get_connection().unwrap();
+    println!("Connected to Redis queue on {}!", UPSTASH_REDIS_URL);
 
     // let video_url = "https://www.youtube.com/watch?v=swJsw9Jvgoc";
     let curr_ts = SystemTime::now()
