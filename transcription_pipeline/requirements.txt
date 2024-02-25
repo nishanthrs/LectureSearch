@@ -1,0 +1,8 @@
+accelerate
+ninja
+packaging
+redis
+torch
+transformers
+typesense
+yt_dlp

@@ -12,6 +12,7 @@ from typing import Any, Dict, List, Optional
 import yt_dlp
 
 
+# TODO: Set these as env vars in Dockerfile
 COLLECTION_NAME = "educational_video_transcriptions"
 LOCAL_REDIS_URL = "redis://127.0.0.1:6379"
 UPSTASH_REDIS_URL = "redis://default:dc4072d39b6745739f01b6c14cc2a658@fly-lecturesearch-web-redis.upstash.io:6379"
@@ -172,8 +173,12 @@ def upload_transcription_data_to_typesense(
 
 def exec_task():
     redis_client = redis.Redis(
-        host="127.0.0.1",
+        # host="127.0.0.1",
+        # port=6379,
+        # decode_responses=True,
+        host="fly-lecturesearch-web-redis.upstash.io",
         port=6379,
+        password="dc4072d39b6745739f01b6c14cc2a658",
         decode_responses=True,
     )
     # TODO: Experiment with popping multiple tasks off the queue and running downloading/transcription in parallel
@@ -184,7 +189,9 @@ def exec_task():
         video_id = task_info["video_id"]
         print(f"Popped task {task_id}: {video_id}")
     else:
-        audio_filepath, metadata_filepath = extract_audio_and_metadata_from_video("https://www.youtube.com/watch?v=I2ZK3ngNvvI")
+        audio_filepath, metadata_filepath = extract_audio_and_metadata_from_video(
+            "https://www.youtube.com/watch?v=I2ZK3ngNvvI"
+        )
 
         transcription_chunks = transcribe_video(audio_filepath)
 
