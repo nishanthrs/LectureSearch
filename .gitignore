@@ -3,8 +3,10 @@ search_backend/Cargo.lock
 search_backend/**/*codegen/
 search_backend/*.json
 search_backend/*.db
+search_backend/*.log
 
 transcription_pipeline/*.wav
 transcription_pipeline/*.info.json
+transcription_pipeline/*.log
 
 .vscode/

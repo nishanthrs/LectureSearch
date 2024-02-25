@@ -4,6 +4,7 @@ use anyhow::{Error, Result};
 use axum::{extract::Query, http::StatusCode, routing::get, Json, Router};
 use serde::de::value::MapDeserializer;
 use serde::{Deserialize, Serialize};
+use std::env;
 use std::net::SocketAddr;
 use typesense_codegen::apis::configuration::{ApiKey, Configuration};
 use typesense_codegen::apis::documents_api::search_collection;
@@ -12,7 +13,7 @@ use url::Url;
 
 use transcription_tasks::push_transcription_task_to_queue;
 
-const TYPESENSE_API_KEY: &str = "ncN2n85vYxgCg45khosRNlOb0vEu6gyEYB396h2zelSMZzyg";
+const LOCAL_TYPESENSE_API_KEY: &str = "ncN2n85vYxgCg45khosRNlOb0vEu6gyEYB396h2zelSMZzyg";
 
 #[derive(Deserialize)]
 struct SearchParams {
@@ -57,7 +58,7 @@ async fn search_typesense_idx(query: String) -> Result<Vec<VideoTranscriptionDoc
         client,
         api_key: Some(ApiKey {
             prefix: None,
-            key: TYPESENSE_API_KEY.to_string(),
+            key: env::var("TYPESENSE_API_KEY").unwrap(),
         }),
         basic_auth: None,
         oauth_access_token: None,
@@ -126,8 +127,7 @@ async fn main() {
     let app = Router::new()
         .route("/search", get(handle_search))
         .route("/upload", get(handle_upload));
-    let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
-
+    let addr = "[::]:8080".parse::<SocketAddr>().unwrap();
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
