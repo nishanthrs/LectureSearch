@@ -5,7 +5,6 @@ use redis::Commands;
 use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
 
-const LOCAL_REDIS_URL: &str = "redis://127.0.0.1:6379";
 const UPSTASH_REDIS_URL: &str =
     "redis://default:dc4072d39b6745739f01b6c14cc2a658@fly-lecturesearch-web-redis.upstash.io:6379";
 const REDIS_TASK_QUEUE_NAME: &str = "transcription_task_queue";

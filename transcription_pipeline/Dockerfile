@@ -8,6 +8,7 @@ RUN apt update \
     && apt update -q \
     && apt install -y --no-install-recommends cuda-nvcc-12-2 libcublas-12-2 libcudnn8
 
+# Install pip pkgs to run python script to download, transcribe, and upload videos
 WORKDIR /app
 COPY . .
 RUN pip install -r requirements.txt && pip install flash-attn --no-build-isolation

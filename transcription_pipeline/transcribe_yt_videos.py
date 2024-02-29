@@ -12,13 +12,10 @@ from typing import Any, Dict, List, Optional
 import yt_dlp
 
 
-# TODO: Set these as env vars in Dockerfile
+# TODO: Set these as Fly secrets: https://fly.io/docs/reference/secrets/ or env vars in Dockerfile
 COLLECTION_NAME = "educational_video_transcriptions"
-LOCAL_REDIS_URL = "redis://127.0.0.1:6379"
 UPSTASH_REDIS_URL = "redis://default:dc4072d39b6745739f01b6c14cc2a658@fly-lecturesearch-web-redis.upstash.io:6379"
 QUEUE_NAME = "transcription_tasks_queue"
-TYPESENSE_API_KEY = "ncN2n85vYxgCg45khosRNlOb0vEu6gyEYB396h2zelSMZzyg"
-
 
 TranscriptionChunks = List[Dict[str, Any]]
 
@@ -80,6 +77,7 @@ def transcribe_video(audio_filepath: str) -> TranscriptionChunks:
         chunk_length_s=30,
         batch_size=12,  # Ideal size: 24, but VRAM is a constraint (12 GB isn't enough for a batch size of 24)
         return_timestamps=True,
+        language="en",
     )
     print(f"Transcription output: {transcription_output['chunks']}")
     return transcription_output["chunks"]
@@ -88,9 +86,10 @@ def transcribe_video(audio_filepath: str) -> TranscriptionChunks:
 def init_search_client() -> typesense.Client:
     """Init Typesense client to communicate with Typesense server"""
     client = typesense.Client({
-        "api_key": TYPESENSE_API_KEY,
+        # TODO: Currently hardcoded; get this working with Fly secrets
+        "api_key": "lecturesearch-typesense-key",
         "nodes": [{
-            "host": "localhost",
+            "host": "typesense-search-idx.flycast",
             "port": "8108",
             "protocol": "http",
         }],
@@ -188,20 +187,21 @@ def exec_task():
         task_id = task_info["id"]
         video_id = task_info["video_id"]
         print(f"Popped task {task_id}: {video_id}")
-    else:
-        audio_filepath, metadata_filepath = extract_audio_and_metadata_from_video(
-            "https://www.youtube.com/watch?v=I2ZK3ngNvvI"
-        )
+    
+    # TODO: Run hardcoded version for now; remove later
+    audio_filepath, metadata_filepath = extract_audio_and_metadata_from_video(
+        "https://www.youtube.com/watch?v=I2ZK3ngNvvI"
+    )
 
-        transcription_chunks = transcribe_video(audio_filepath)
+    transcription_chunks = transcribe_video(audio_filepath)
 
-        typesense_client = init_search_client()
-        # typesense_client.collections[COLLECTION_NAME].delete()
-        try:
-            init_collection(typesense_client)
-        except typesense.exceptions.ObjectAlreadyExists:
-            pass
-        upload_transcription_data_to_typesense(typesense_client, transcription_chunks, metadata_filepath)
+    typesense_client = init_search_client()
+    # typesense_client.collections[COLLECTION_NAME].delete()
+    try:
+        init_collection(typesense_client)
+    except typesense.exceptions.ObjectAlreadyExists:
+        pass
+    upload_transcription_data_to_typesense(typesense_client, transcription_chunks, metadata_filepath)
 
 
 if __name__ == "__main__":

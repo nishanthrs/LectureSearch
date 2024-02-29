@@ -1,6 +1,9 @@
 # Web Server: Search Backend
 
 * Implemented via Rust Axum web server framework
+* Can be accessed through endpoints:
+  * `https://lecturesearch-web.fly.dev/upload?video_url=https://www.youtube.com/watch?v=BAAHVtqKVdQ`
+  * `https://lecturesearch-web.fly.dev/search?query=distributed+systems`
 
 ## Typesense Rust Client
 

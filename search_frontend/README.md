@@ -35,6 +35,11 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
+## UI Templates and Components
+
+- [Next.JS Chatbot UI](https://vercel.com/templates/next.js/nextjs-ai-chatbot)
+- [Search Projects/Templates](https://vercel.com/templates?framework=next.js&search=search)
+
 ## Calling APIs
 
-[SWR](https://swr.vercel.app/)
+* [SWR](https://swr.vercel.app/)

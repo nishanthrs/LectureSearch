@@ -8,8 +8,7 @@ RUN cargo install --path . && cargo build --release
 # TODO: Figure out how to install Typesense here
 FROM ubuntu:22.04
 WORKDIR /app
-EXPOSE 8108
-EXPOSE 8080
-RUN apt update && apt install -y sqlite net-tools
+RUN apt update && apt install -y curl sqlite net-tools
 COPY --from=builder /app/lecturesearch-web/target/release/lecturesearch-web /app/lecturesearch-web
+EXPOSE 8080
 CMD ["/app/lecturesearch-web"]

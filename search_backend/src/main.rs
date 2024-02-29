@@ -13,7 +13,7 @@ use url::Url;
 
 use transcription_tasks::push_transcription_task_to_queue;
 
-const LOCAL_TYPESENSE_API_KEY: &str = "ncN2n85vYxgCg45khosRNlOb0vEu6gyEYB396h2zelSMZzyg";
+// TODO: Separate out SQLite and Typesense DBs into separate Fly.io apps
 
 #[derive(Deserialize)]
 struct SearchParams {
@@ -51,14 +51,16 @@ struct VideoTranscriptionDoc {
 
 async fn search_typesense_idx(query: String) -> Result<Vec<VideoTranscriptionDoc>> {
     let client = reqwest::Client::new();
-    let typesense_host = Url::parse("http://0.0.0.0:8108").unwrap();
+    let typesense_host = Url::parse("https://typesense-search-idx.fly.dev:8108").unwrap();
     let collection_name = "educational_video_transcriptions";
     let typesense_config = Configuration {
         base_path: typesense_host.to_string(),
         client,
         api_key: Some(ApiKey {
             prefix: None,
-            key: env::var("TYPESENSE_API_KEY").unwrap(),
+            // TODO: Currently hardcoded, get this working with Fly secrets: https://fly.io/docs/reference/secrets/
+            // key: env::var("TYPESENSE_API_KEY").unwrap(),
+            key: "lecturesearch-typesense-key".to_string(),
         }),
         basic_auth: None,
         oauth_access_token: None,
