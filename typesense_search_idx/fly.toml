@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for typesense-search-idx on 2024-02-28T22:28:57-05:00
+# fly.toml app configuration file generated for typesense-search-idx on 2024-02-29T18:32:22-05:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -7,26 +7,24 @@ app = 'typesense-search-idx'
 primary_region = 'ewr'
 
 [build]
-image = "typesense/typesense:0.26.0.rc58"
+  image = 'typesense/typesense:0.26.0.rc58'
 
 [env]
-TYPESENSE_API_KEY = "lecturesearch-typesense-key"
-TYPESENSE_DATA_DIR = "/data"
+  TYPESENSE_API_KEY = 'lecturesearch-typesense-key'
+  TYPESENSE_DATA_DIR = '/data'
 
-[mounts]
-source = "typesense_data"
-destination = "/data"
+[[mounts]]
+  source = 'typesense_data'
+  destination = '/data'
 
 [http_service]
-internal_port = 8108
-force_https = false
-handlers = ["http"]
-auto_stop_machines = true
-auto_start_machines = true
-min_machines_running = 0
-processes = ['app']
+  internal_port = 8108
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
 
 [[vm]]
-memory = '2gb'
-cpu_kind = 'shared'
-cpus = 1
+  memory = '2gb'
+  cpu_kind = 'shared'
+  cpus = 1

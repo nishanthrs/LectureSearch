@@ -1,4 +1,4 @@
-# Typesense Search Index 
+# Typesense Search Index
 
 ## Setup on Fly.io
 
@@ -10,7 +10,7 @@
   * Create a fly volume: `fly vol create typesense_data -r ewr`
     * [Fly volume docs](https://fly.io/docs/reference/volumes/)
   * Modified mounts in fly.toml and used pre-built Typesense Docker image
-  * Fly's private networking relies on programs listening on IPv6 addresses, but Typesense only support IPv4. Use flycast to route connections through a proxy that can handle IPv4: `fly ips allocate-v6 --private`
+  * Fly's private networking relies on programs listening on IPv6 addresses, but Typesense only support IPv4. Use flycast to route connections through a proxy that can handle IPv4: `fly ips allocate-v6 --private` or `fly ips allocate-v4 --shared` (not sure which one right now)
     * Found this issue in [the forums](https://community.fly.io/t/cant-connect-to-typesense-deployment-via-private-network/12662/5)
   * Deploy via `fly deploy`
   * Test connection to b/w Fly.io apps using [this guide](https://fly.io/docs/networking/private-networking/#flycast-private-load-balancing)

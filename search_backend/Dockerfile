@@ -5,7 +5,6 @@ COPY . .
 RUN cargo install --path . && cargo build --release
 
 # Start Ubuntu image and run Rust binary here
-# TODO: Figure out how to install Typesense here
 FROM ubuntu:22.04
 WORKDIR /app
 RUN apt update && apt install -y curl sqlite net-tools
