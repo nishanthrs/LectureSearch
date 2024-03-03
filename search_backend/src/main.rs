@@ -51,7 +51,7 @@ struct VideoTranscriptionDoc {
 
 async fn search_typesense_idx(query: String) -> Result<Vec<VideoTranscriptionDoc>> {
     let client = reqwest::Client::new();
-    let typesense_host = Url::parse("https://typesense-search-idx.fly.dev:8108").unwrap();
+    let typesense_host = Url::parse("https://typesense-search-idx.fly.dev").unwrap();
     let collection_name = "educational_video_transcriptions";
     let typesense_config = Configuration {
         base_path: typesense_host.to_string(),

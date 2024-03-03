@@ -92,9 +92,9 @@ def init_search_client() -> typesense.Client:
     client = typesense.Client({
         "api_key": os.environ["TYPESENSE_API_KEY"],
         "nodes": [{
-            "host": "typesense-search-idx.flycast",
-            "port": "8108",
-            "protocol": "http",
+            "host": "typesense-search-idx.fly.dev",
+            "port": "443",
+            "protocol": "https",
         }],
         "connection_timeout_seconds": 2.0,
     })
