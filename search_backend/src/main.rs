@@ -58,9 +58,7 @@ async fn search_typesense_idx(query: String) -> Result<Vec<VideoTranscriptionDoc
         client,
         api_key: Some(ApiKey {
             prefix: None,
-            // TODO: Currently hardcoded, get this working with Fly secrets: https://fly.io/docs/reference/secrets/
-            // key: env::var("TYPESENSE_API_KEY").unwrap(),
-            key: "lecturesearch-typesense-key".to_string(),
+            key: env::var("TYPESENSE_API_KEY").unwrap(),
         }),
         basic_auth: None,
         oauth_access_token: None,

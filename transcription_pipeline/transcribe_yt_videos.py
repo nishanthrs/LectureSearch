@@ -63,6 +63,10 @@ def extract_audio_and_metadata_from_video(yt_url: str) -> str:
 
 def transcribe_video(audio_filepath: str) -> TranscriptionChunks:
     """Transcribe audio from audio_filepath"""
+    generate_kwargs = {
+        "task": "transcribe",
+        "language": "en",  # Only transcribe English videos
+    }
     pipe = pipeline(
         "automatic-speech-recognition",
         model="openai/whisper-large-v3",
@@ -71,13 +75,13 @@ def transcribe_video(audio_filepath: str) -> TranscriptionChunks:
         model_kwargs={"attn_implementation": "flash_attention_2"} 
         if is_flash_attn_2_available() 
         else {"attn_implementation": "sdpa"},
+        generate_kwargs=generate_kwargs,
     )
     transcription_output = pipe(
         audio_filepath,
         chunk_length_s=30,
-        batch_size=12,  # Ideal size: 24, but VRAM is a constraint (12 GB isn't enough for a batch size of 24)
+        batch_size=12,  # VRAM is a constraint (12 GB isn't enough for a batch size of 24)
         return_timestamps=True,
-        language="en",
     )
     print(f"Transcription output: {transcription_output['chunks']}")
     return transcription_output["chunks"]
@@ -86,8 +90,7 @@ def transcribe_video(audio_filepath: str) -> TranscriptionChunks:
 def init_search_client() -> typesense.Client:
     """Init Typesense client to communicate with Typesense server"""
     client = typesense.Client({
-        # TODO: Currently hardcoded; get this working with Fly secrets
-        "api_key": "lecturesearch-typesense-key",
+        "api_key": os.environ["TYPESENSE_API_KEY"],
         "nodes": [{
             "host": "typesense-search-idx.flycast",
             "port": "8108",
@@ -171,22 +174,19 @@ def upload_transcription_data_to_typesense(
 
 
 def exec_task():
-    redis_client = redis.Redis(
-        # host="127.0.0.1",
-        # port=6379,
-        # decode_responses=True,
-        host="fly-lecturesearch-web-redis.upstash.io",
-        port=6379,
-        password="dc4072d39b6745739f01b6c14cc2a658",
-        decode_responses=True,
-    )
-    # TODO: Experiment with popping multiple tasks off the queue and running downloading/transcription in parallel
-    task_data = redis_client.lpop(QUEUE_NAME)
-    if task_data is not None:
-        task_info = json.loads(task_data)
-        task_id = task_info["id"]
-        video_id = task_info["video_id"]
-        print(f"Popped task {task_id}: {video_id}")
+    # redis_client = redis.Redis(
+    #     host="fly-lecturesearch-web-redis.upstash.io",
+    #     port=6379,
+    #     password="dc4072d39b6745739f01b6c14cc2a658",
+    #     decode_responses=True,
+    # )
+    # # TODO: Experiment with popping multiple tasks off the queue and running downloading/transcription in parallel
+    # task_data = redis_client.lpop(QUEUE_NAME)
+    # if task_data is not None:
+    #     task_info = json.loads(task_data)
+    #     task_id = task_info["id"]
+    #     video_id = task_info["video_id"]
+    #     print(f"Popped task {task_id}: {video_id}")
     
     # TODO: Run hardcoded version for now; remove later
     audio_filepath, metadata_filepath = extract_audio_and_metadata_from_video(

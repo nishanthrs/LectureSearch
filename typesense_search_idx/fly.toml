@@ -7,24 +7,23 @@ app = 'typesense-search-idx'
 primary_region = 'ewr'
 
 [build]
-  image = 'typesense/typesense:0.26.0.rc58'
+image = 'typesense/typesense:0.26.0.rc58'
 
 [env]
-  TYPESENSE_API_KEY = 'lecturesearch-typesense-key'
-  TYPESENSE_DATA_DIR = '/data'
+TYPESENSE_DATA_DIR = '/data'
 
-[[mounts]]
-  source = 'typesense_data'
-  destination = '/data'
+[mounts]
+source = 'typesense_data'
+destination = '/data'
 
 [http_service]
-  internal_port = 8108
-  auto_stop_machines = true
-  auto_start_machines = true
-  min_machines_running = 0
-  processes = ['app']
+internal_port = 8108
+auto_stop_machines = false
+auto_start_machines = true
+# min_machines_running = 0
+# processes = ['app']
 
 [[vm]]
-  memory = '2gb'
-  cpu_kind = 'shared'
-  cpus = 1
+memory = '2gb'
+cpu_kind = 'shared'
+cpus = 1

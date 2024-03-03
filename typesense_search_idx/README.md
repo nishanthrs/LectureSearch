@@ -16,3 +16,8 @@
   * Test connection to b/w Fly.io apps using [this guide](https://fly.io/docs/networking/private-networking/#flycast-private-load-balancing)
 * Other guides:
   * [Database and Storage Fly.io Guide](https://fly.io/docs/database-storage-guides/)
+
+## Testing on Fly.io Machine
+
+* `fly ssh console -C "apt install curl"`
+* `fly ssh console -C "curl -H 'X-TYPESENSE-API-KEY: lecturesearch-typesense-key' http://localhost:8108/collections"`
