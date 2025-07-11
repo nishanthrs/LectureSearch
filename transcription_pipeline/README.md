@@ -1,6 +1,14 @@
 # Video Transcription Pipeline
 
-* Will be implemented as a DAG pipeline, Redis message queue, and run on a set of Kubernetes/Fly.io workers
+## Overview
+* Will be implemented as an Airflow DAG pipeline deployed as a Docker container:
+  * Transcribes via fasterwhisper
+  * Generates embeddings via encoder model (e.g. sentence-transformers (SBERT), ModernBert, local LLM that can fit on GPU worker (e.g. Qwen3), or embeddings APIs from Gemini, Cohere, etc.)
+    * [MTEB Leaderboard](https://huggingface.co/spaces/mteb/leaderboard)
+  * Writes to [local Parquet files / Polars dataframes](https://minimaxir.com/2025/02/embeddings-parquet/) or local/remote vector database (Postgres: pgvector)
+  * Get working locally on PC with local Polars dataframes, sentence-transformers models or Qwen3 embeddings models, and faster-whisper model -> use remote Postgres database -> deploy to GPU worker
+ 
+## Video Transcription
 * We could use Google Cloud's or AWS's managed STT services, but that is much more expensive.
   * Google Cloud: $.009 per 15 secs; .009 * (3600*24/15) = $51.84 per hour of video
   * Fly GPU A100 (40GB) pricing: $2.50 per hour
@@ -8,7 +16,7 @@
   * Based on the benchmarks for [`insanely-fast-whisper`](https://github.com/Vaibhavs10/insanely-fast-whisper?tab=readme-ov-file), via batching and fp16 and bettertransformer framework, we can transcribe at 30x realtime.
   * That means we can transcribe 30(60) = 1800 mins of audio in an hour or for $2.50. That means ~30 videos of 1 hr lectures transcribed at $2.50. Even if this is an optimistic estimate, that's significantly cheaper than any managed service. 
   
-## Installing Nvidia Drivers and CUDA
+## Installing Nvidia Drivers and CUDA on Ubuntu PC
 
 Was a huge pain in the ass to download Nvidia drivers on my Ubuntu PC; I've lost count on how many times I've had to restart and reboot in recovery mode:
 
