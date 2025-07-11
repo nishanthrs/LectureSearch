@@ -2,7 +2,7 @@
 
 ## Overview
 * Will be implemented as an Airflow DAG pipeline deployed as a Docker container:
-  * Transcribes via fasterwhisper
+  * Transcribes via [fasterwhisper](https://github.com/SYSTRAN/faster-whisper)
   * Generates embeddings via encoder model (e.g. sentence-transformers (SBERT), ModernBert, local LLM that can fit on GPU worker (e.g. Qwen3), or embeddings APIs from Gemini, Cohere, etc.)
     * [MTEB Leaderboard](https://huggingface.co/spaces/mteb/leaderboard)
   * Writes to [local Parquet files / Polars dataframes](https://minimaxir.com/2025/02/embeddings-parquet/) or local/remote vector database (Postgres: pgvector)
